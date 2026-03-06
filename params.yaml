@@ -2,9 +2,7 @@ languages:
   en: librispeech
   fr: mls
 
-mean_languages:
-  - en
-  - fr
+mean_languages: "en fr"
 
 
 # But this parameter is useless here, 

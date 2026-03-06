@@ -37,10 +37,8 @@ def convert_librispeech(lang):
     count = 0
 
     for tf in trans_files:
-
         with open(tf, encoding="utf-8") as f:
             for line in f:
-
                 utt_id, _ = line.strip().split(" ", 1)
 
                 speaker = utt_id.split("-")[0]
@@ -52,7 +50,6 @@ def convert_librispeech(lang):
                 convert_one(flac_path, wav_path)
 
                 count += 1
-
     print(f"Converted {count} LibriSpeech files")
 
 # ---------- MLS ----------
@@ -67,9 +64,7 @@ def convert_mls(lang):
     count = 0
 
     with open(transcript_file, encoding="utf-8") as f:
-
         for line in f:
-
             utt_id, _ = line.strip().split("\t", 1)
 
             # MLS id example:
@@ -85,15 +80,12 @@ def convert_mls(lang):
             convert_one(flac_path, wav_path)
 
             count += 1
-
     print(f"Converted {count} MLS files")
 
 # ---------- MAIN ----------
 
 def main():
-
     parser = argparse.ArgumentParser()
-
     parser.add_argument(
         "--lang",
         required=True,

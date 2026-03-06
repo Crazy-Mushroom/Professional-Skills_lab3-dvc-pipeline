@@ -1,0 +1,288 @@
+schema: '2.0'
+stages:
+  convert_flac_to_wav@en:
+    cmd: python scripts/convert_flac_to_wav.py --lang en --dataset librispeech
+    deps:
+    - path: data/raw/en/flac
+      hash: md5
+      md5: d3062995c648bd5411f83d690521bf9e.dir
+      size: 18440913
+      nfiles: 134
+    - path: scripts/convert_flac_to_wav.py
+      hash: md5
+      md5: 35719cdbd9ce9d494ebea623e3369f2b
+      size: 3344
+    outs:
+    - path: data/raw/en/wav
+      hash: md5
+      md5: d7e5498dcbb317c926a4c6aa23cd3383.dir
+      size: 30847218
+      nfiles: 124
+  convert_flac_to_wav@fr:
+    cmd: python scripts/convert_flac_to_wav.py --lang fr --dataset mls
+    deps:
+    - path: data/raw/fr/flac
+      hash: md5
+      md5: 42df033037adfa059704f39a925c060f.dir
+      size: 33931706
+      nfiles: 126
+    - path: scripts/convert_flac_to_wav.py
+      hash: md5
+      md5: 35719cdbd9ce9d494ebea623e3369f2b
+      size: 3344
+    outs:
+    - path: data/raw/fr/wav
+      hash: md5
+      md5: 5d107e41b472f2174ed1ccd3e097b412.dir
+      size: 58670096
+      nfiles: 124
+  create_clean_manifest@en:
+    cmd: python scripts/create_clean_manifest.py --lang en
+    deps:
+    - path: data/raw/en/wav
+      hash: md5
+      md5: d7e5498dcbb317c926a4c6aa23cd3383.dir
+      size: 30847218
+      nfiles: 124
+    - path: scripts/create_clean_manifest.py
+      hash: md5
+      md5: d46586a08649a0571776787970c2b460
+      size: 5607
+    outs:
+    - path: data/manifests/en/clean.jsonl
+      hash: md5
+      md5: 8b7da2cb01ab8abaafbb77d70e80567e
+      size: 45896
+  create_clean_manifest@fr:
+    cmd: python scripts/create_clean_manifest.py --lang fr
+    deps:
+    - path: data/raw/fr/wav
+      hash: md5
+      md5: 5d107e41b472f2174ed1ccd3e097b412.dir
+      size: 58670096
+      nfiles: 124
+    - path: scripts/create_clean_manifest.py
+      hash: md5
+      md5: d46586a08649a0571776787970c2b460
+      size: 5607
+    outs:
+    - path: data/manifests/fr/clean.jsonl
+      hash: md5
+      md5: 673242d3b644100aeb33fe2452985dba
+      size: 63887
+  text_to_phonemes@en:
+    cmd: python scripts/text_to_phonemes.py --lang en
+    deps:
+    - path: data/manifests/en/clean.jsonl
+      hash: md5
+      md5: 8b7da2cb01ab8abaafbb77d70e80567e
+      size: 45896
+    - path: scripts/text_to_phonemes.py
+      hash: md5
+      md5: dca619c8e6bb559dc951cac53ddc713d
+      size: 2678
+    outs:
+    - path: data/manifests/en/phoneme.jsonl
+      hash: md5
+      md5: 887a91b055a96a87849086d5fd92581e
+      size: 68711
+  text_to_phonemes@fr:
+    cmd: python scripts/text_to_phonemes.py --lang fr
+    deps:
+    - path: data/manifests/fr/clean.jsonl
+      hash: md5
+      md5: 673242d3b644100aeb33fe2452985dba
+      size: 63887
+    - path: scripts/text_to_phonemes.py
+      hash: md5
+      md5: dca619c8e6bb559dc951cac53ddc713d
+      size: 2678
+    outs:
+    - path: data/manifests/fr/phoneme.jsonl
+      hash: md5
+      md5: c3cba5445cc8b0e8f5b2b7a8567899ed
+      size: 123425
+  add_noise@en:
+    cmd: python scripts/add_noise.py --lang en
+    deps:
+    - path: data/manifests/en/phoneme.jsonl
+      hash: md5
+      md5: 887a91b055a96a87849086d5fd92581e
+      size: 68711
+    - path: scripts/add_noise.py
+      hash: md5
+      md5: 46a08d2f47c8d833958629df2b33ae22
+      size: 3374
+    - path: scripts/add_noise_utils.py
+      hash: md5
+      md5: 8cee7113a16fa5529f0dc60683334c90
+      size: 818
+    outs:
+    - path: data/manifests/en/noisy.jsonl
+      hash: md5
+      md5: 242d281a0c5ca24ac5ad0d9b14ac1f49
+      size: 804104
+    - path: data/noisy/en
+      hash: md5
+      md5: 7cf7e7ad320f3fff29f90a4bce4b3c0f.dir
+      size: 308472180
+      nfiles: 1240
+  add_noise@fr:
+    cmd: python scripts/add_noise.py --lang fr
+    deps:
+    - path: data/manifests/fr/phoneme.jsonl
+      hash: md5
+      md5: c3cba5445cc8b0e8f5b2b7a8567899ed
+      size: 123425
+    - path: scripts/add_noise.py
+      hash: md5
+      md5: 46a08d2f47c8d833958629df2b33ae22
+      size: 3374
+    - path: scripts/add_noise_utils.py
+      hash: md5
+      md5: 8cee7113a16fa5529f0dc60683334c90
+      size: 818
+    outs:
+    - path: data/manifests/fr/noisy.jsonl
+      hash: md5
+      md5: a7c1dfc7ed4349f9f5e7c5087b397dd9
+      size: 1603994
+    - path: data/noisy/fr
+      hash: md5
+      md5: 97478330884da8fdcf67ff68fcd5282a.dir
+      size: 586700960
+      nfiles: 1240
+  inference@en:
+    cmd: python scripts/run_inference.py --lang en
+    deps:
+    - path: data/manifests/en/noisy.jsonl
+      hash: md5
+      md5: 242d281a0c5ca24ac5ad0d9b14ac1f49
+      size: 804104
+    - path: scripts/run_inference.py
+      hash: md5
+      md5: 458346026b8d61983f1783de10513cb6
+      size: 3784
+    outs:
+    - path: data/manifests/en/predictions.jsonl
+      hash: md5
+      md5: 72717626f6743258cea8710d6e89265d
+      size: 1202021
+  inference@fr:
+    cmd: python scripts/run_inference.py --lang fr
+    deps:
+    - path: data/manifests/fr/noisy.jsonl
+      hash: md5
+      md5: a7c1dfc7ed4349f9f5e7c5087b397dd9
+      size: 1603994
+    - path: scripts/run_inference.py
+      hash: md5
+      md5: 458346026b8d61983f1783de10513cb6
+      size: 3784
+    outs:
+    - path: data/manifests/fr/predictions.jsonl
+      hash: md5
+      md5: 93ea2c06287be20798ad8742ec9beb73
+      size: 2209517
+  evaluate_per@en:
+    cmd: python scripts/evaluate_per.py --lang en
+    deps:
+    - path: data/manifests/en/predictions.jsonl
+      hash: md5
+      md5: 72717626f6743258cea8710d6e89265d
+      size: 1202021
+    - path: scripts/evaluate_per.py
+      hash: md5
+      md5: 462e40786a9a7f8dae531c9a57435514
+      size: 3730
+    outs:
+    - path: results/en/per_by_snr.json
+      hash: md5
+      md5: 9c7214353a85e4cd989a94fe0dd5fe1d
+      size: 296
+    - path: results/en/per_table.txt
+      hash: md5
+      md5: cd882ca1f56d6341e7c18d2b0224fa71
+      size: 121
+  evaluate_per@fr:
+    cmd: python scripts/evaluate_per.py --lang fr
+    deps:
+    - path: data/manifests/fr/predictions.jsonl
+      hash: md5
+      md5: 93ea2c06287be20798ad8742ec9beb73
+      size: 2209517
+    - path: scripts/evaluate_per.py
+      hash: md5
+      md5: 462e40786a9a7f8dae531c9a57435514
+      size: 3730
+    outs:
+    - path: results/fr/per_by_snr.json
+      hash: md5
+      md5: 2c89e6ecb727c5e4ee23fde7b313017e
+      size: 294
+    - path: results/fr/per_table.txt
+      hash: md5
+      md5: feebb13031cb21020a72aa4424ae587d
+      size: 121
+  plot_per_vs_snr@en:
+    cmd: python scripts/plot_per_vs_snr.py --lang en
+    deps:
+    - path: results/en/per_by_snr.json
+      hash: md5
+      md5: 9c7214353a85e4cd989a94fe0dd5fe1d
+      size: 296
+    - path: scripts/plot_per_vs_snr.py
+      hash: md5
+      md5: 348cdf1f17a5b010093781f3d6d996a5
+      size: 899
+    outs:
+    - path: results/en/per_vs_snr.png
+      hash: md5
+      md5: 43106e6ce072cd01b653add97cd9e2bb
+      size: 19894
+  plot_per_vs_snr@fr:
+    cmd: python scripts/plot_per_vs_snr.py --lang fr
+    deps:
+    - path: results/fr/per_by_snr.json
+      hash: md5
+      md5: 2c89e6ecb727c5e4ee23fde7b313017e
+      size: 294
+    - path: scripts/plot_per_vs_snr.py
+      hash: md5
+      md5: 348cdf1f17a5b010093781f3d6d996a5
+      size: 899
+    outs:
+    - path: results/fr/per_vs_snr.png
+      hash: md5
+      md5: 98f02a971316d9a16679765a59ca2495
+      size: 20775
+  compute_mean:
+    cmd: python scripts/compute_mean_per.py --langs en fr
+    deps:
+    - path: scripts/compute_mean_per.py
+      hash: md5
+      md5: 3fea0432ae6b457ef0b1c3152c63e5a5
+      size: 1155
+    params:
+      params.yaml:
+        mean_languages: en fr
+    outs:
+    - path: results/mean_per_by_snr.json
+      hash: md5
+      md5: c8775607b3889446f6f6baab7f506802
+      size: 292
+  plot_mean_per:
+    cmd: python scripts/plot_mean_per.py --langs en fr
+    deps:
+    - path: scripts/plot_mean_per.py
+      hash: md5
+      md5: 5634a96646cbd9ac3ad3f0bf3faa87a2
+      size: 1612
+    params:
+      params.yaml:
+        mean_languages: en fr
+    outs:
+    - path: results/per_vs_snr_all_langs.png
+      hash: md5
+      md5: 2b871411e16b38401f186df8a475f93b
+      size: 36106

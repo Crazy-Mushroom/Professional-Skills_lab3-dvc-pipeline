@@ -112,21 +112,16 @@ def main():
                             
                 # ---------- MLS ----------
                 if file == "transcripts.txt":
-
                     trans_path = Path(root) / file
 
                     with open(trans_path, "r", encoding="utf-8") as f:
-
                         for line in f:
-
                             line = line.strip()
                             if not line:
                                 continue
 
                             utt_id, ref_text = line.split("\t", 1)
-
                             speaker, book, utt = utt_id.split("_")
-
                             utt_stem = f"{speaker}-{book}-{utt}"
 
                             wav_path = (
@@ -138,8 +133,6 @@ def main():
                                 / f"{utt_stem}.wav"
                             )
                             process_item(tmp_file, wav_path, utt_stem, ref_text, LANG)
-
-
 
         
     # Atomic rename

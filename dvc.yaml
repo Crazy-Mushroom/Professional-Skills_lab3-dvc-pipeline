@@ -2,7 +2,7 @@ stages:
   convert_flac_to_wav:
     foreach: ${languages}
     do:
-      cmd: venv/Scripts/python scripts/convert_flac_to_wav.py --lang ${key} --dataset ${item}
+      cmd: python scripts/convert_flac_to_wav.py --lang ${key} --dataset ${item}
       deps:
         - scripts/convert_flac_to_wav.py
         - data/raw/${key}/flac
@@ -12,7 +12,7 @@ stages:
   create_clean_manifest:
     foreach: ${languages}
     do:
-      cmd: venv/Scripts/python scripts/create_clean_manifest.py --lang ${key}
+      cmd: python scripts/create_clean_manifest.py --lang ${key}
       deps:
         - scripts/create_clean_manifest.py
         - data/raw/${key}/wav
@@ -22,7 +22,7 @@ stages:
   text_to_phonemes:
     foreach: ${languages}
     do:
-      cmd: venv/Scripts/python scripts/text_to_phonemes.py --lang ${key}
+      cmd: python scripts/text_to_phonemes.py --lang ${key}
       deps:
         - scripts/text_to_phonemes.py
         - data/manifests/${key}/clean.jsonl
@@ -32,7 +32,7 @@ stages:
   add_noise:
     foreach: ${languages}
     do:
-      cmd: venv/Scripts/python scripts/add_noise.py --lang ${key}
+      cmd: python scripts/add_noise.py --lang ${key}
       deps:
         - scripts/add_noise.py
         - scripts/add_noise_utils.py
@@ -44,7 +44,7 @@ stages:
   inference:
     foreach: ${languages}
     do:
-      cmd: venv/Scripts/python scripts/run_inference.py --lang ${key}
+      cmd: python scripts/run_inference.py --lang ${key}
       deps:
         - scripts/run_inference.py
         - data/manifests/${key}/noisy.jsonl
@@ -54,7 +54,7 @@ stages:
   evaluate_per:
     foreach: ${languages}
     do:
-      cmd: venv/Scripts/python scripts/evaluate_per.py --lang ${key}
+      cmd: python scripts/evaluate_per.py --lang ${key}
       deps:
         - scripts/evaluate_per.py
         - data/manifests/${key}/predictions.jsonl
@@ -65,7 +65,7 @@ stages:
   plot_per_vs_snr:
     foreach: ${languages}
     do:
-      cmd: venv/Scripts/python scripts/plot_per_vs_snr.py --lang ${key}
+      cmd: python scripts/plot_per_vs_snr.py --lang ${key}
       deps:
         - scripts/plot_per_vs_snr.py
         - results/${key}/per_by_snr.json
@@ -73,18 +73,19 @@ stages:
         - results/${key}/per_vs_snr.png
 
   compute_mean:
-    cmd: venv/Scripts/python scripts/compute_mean_per.py --langs ${mean_languages}
+    cmd: python scripts/compute_mean_per.py --langs ${mean_languages}
     deps:
       - scripts/compute_mean_per.py
-      - results
+    params:
+      - mean_languages
     outs:
       - results/mean_per_by_snr.json
 
   plot_mean_per:
-    cmd: venv/Scripts/python scripts/plot_mean_per.py --langs ${mean_languages}
+    cmd: python scripts/plot_mean_per.py --langs ${mean_languages}
     deps:
       - scripts/plot_mean_per.py
-      - results
-      - results/mean_per_by_snr.json
+    params:
+      - mean_languages
     outs:
       - results/per_vs_snr_all_langs.png

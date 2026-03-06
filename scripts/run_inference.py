@@ -1,5 +1,5 @@
 # run_inference.py is for model prediction: audio->predict phoneme
-# On wondows, before run run_inference.py, first run: export PHONEMIZER_ESPEAK_PATH="/c/Program Files/eSpeak NG/libespeak-ng.dll", because windowns search espeak not espeak-ng
+# WARN: On wondows, before run run_inference.py, first run: export PHONEMIZER_ESPEAK_PATH="/c/Program Files/eSpeak NG/libespeak-ng.dll", because windowns search espeak not espeak-ng
 # However, sometimes this does not word as well. 
 # So I give an example on my Windows system, that is os.environ["PHONEMIZER_ESPEAK_LIBRARY"] = r"C:\Program Files\eSpeak NG\libespeak-ng.dll", just for Windows.
 # If run run_inference.py not on Windows, then ignore this line.
