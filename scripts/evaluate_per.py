@@ -81,7 +81,7 @@ def main():
 
     per_by_snr = {}
 
-    for snr in sorted(errors.keys(), reverse=True): # use reverse, so that lare plot will be easier to read as X axis is from -5 to 40
+    for snr in sorted(errors.keys(), reverse=True): # use reverse, so that the plot will be easier to read as X axis is from -5 to 40
         if totals[snr] > 0:
             per = errors[snr] / totals[snr]  
         else: # but rarely, total[snr] = 0, I set the condition just in case it happens
