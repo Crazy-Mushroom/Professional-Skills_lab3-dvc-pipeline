@@ -1,0 +1,7 @@
+venv/
+data/raw/
+data/noisy/
+results/
+__pycache__/
+*.pyc
+.dvc/cache/

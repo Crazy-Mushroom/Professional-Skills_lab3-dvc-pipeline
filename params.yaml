@@ -1,0 +1,24 @@
+languages:
+  en: librispeech
+  fr: mls
+
+mean_languages:
+  - en
+  - fr
+
+
+# But this parameter is useless here, 
+# since in add_noise.py the snr_leval is clearly defined
+# as the lab instruction requires that there would be 10 noise level.
+# I keep this snr_levels parameter here just for reference.
+snr_levels:  
+  - -5
+  - 0
+  - 5
+  - 10
+  - 15
+  - 20
+  - 25
+  - 30
+  - 35
+  - 40

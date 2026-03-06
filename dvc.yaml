@@ -1,0 +1,90 @@
+stages:
+  convert_flac_to_wav:
+    foreach: ${languages}
+    do:
+      cmd: venv/Scripts/python scripts/convert_flac_to_wav.py --lang ${key} --dataset ${item}
+      deps:
+        - scripts/convert_flac_to_wav.py
+        - data/raw/${key}/flac
+      outs:
+        - data/raw/${key}/wav
+
+  create_clean_manifest:
+    foreach: ${languages}
+    do:
+      cmd: venv/Scripts/python scripts/create_clean_manifest.py --lang ${key}
+      deps:
+        - scripts/create_clean_manifest.py
+        - data/raw/${key}/wav
+      outs:
+        - data/manifests/${key}/clean.jsonl
+
+  text_to_phonemes:
+    foreach: ${languages}
+    do:
+      cmd: venv/Scripts/python scripts/text_to_phonemes.py --lang ${key}
+      deps:
+        - scripts/text_to_phonemes.py
+        - data/manifests/${key}/clean.jsonl
+      outs:
+        - data/manifests/${key}/phoneme.jsonl
+
+  add_noise:
+    foreach: ${languages}
+    do:
+      cmd: venv/Scripts/python scripts/add_noise.py --lang ${key}
+      deps:
+        - scripts/add_noise.py
+        - scripts/add_noise_utils.py
+        - data/manifests/${key}/phoneme.jsonl
+      outs:
+        - data/manifests/${key}/noisy.jsonl
+        - data/noisy/${key}
+
+  inference:
+    foreach: ${languages}
+    do:
+      cmd: venv/Scripts/python scripts/run_inference.py --lang ${key}
+      deps:
+        - scripts/run_inference.py
+        - data/manifests/${key}/noisy.jsonl
+      outs:
+        - data/manifests/${key}/predictions.jsonl
+
+  evaluate_per:
+    foreach: ${languages}
+    do:
+      cmd: venv/Scripts/python scripts/evaluate_per.py --lang ${key}
+      deps:
+        - scripts/evaluate_per.py
+        - data/manifests/${key}/predictions.jsonl
+      outs:
+        - results/${key}/per_by_snr.json
+        - results/${key}/per_table.txt
+
+  plot_per_vs_snr:
+    foreach: ${languages}
+    do:
+      cmd: venv/Scripts/python scripts/plot_per_vs_snr.py --lang ${key}
+      deps:
+        - scripts/plot_per_vs_snr.py
+        - results/${key}/per_by_snr.json
+      outs:
+        - results/${key}/per_vs_snr.png
+
+  compute_mean:
+    cmd: venv/Scripts/python scripts/compute_mean_per.py --langs ${mean_languages}
+    deps:
+      - scripts/compute_mean_per.py
+      - results
+    outs:
+      - results/mean_per_by_snr.json
+
+  plot_mean_per:
+    cmd: venv/Scripts/python scripts/plot_mean_per.py --langs ${mean_languages}
+    deps:
+      - scripts/plot_mean_per.py
+      - results
+      - results/mean_per_by_snr.json
+    outs:
+      - results/per_vs_snr_all_langs.png
